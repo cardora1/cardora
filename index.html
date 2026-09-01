@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cardora — Digital Voucher Code Marketplace</title>
+<meta name="description" content="Cardora is a marketplace for buying and selling digital voucher codes. Digital voucher codes only — no physical gift cards.">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="https://cardora.com/">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@graph":[
+    {"@type":"Organization","name":"Cardora","url":"https://cardora.com/","description":"A marketplace for buying and selling digital voucher codes. Cardora sells digital voucher codes only, not physical gift cards."},
+    {"@type":"WebSite","name":"Cardora","url":"https://cardora.com/","description":"Digital voucher code marketplace."},
+    {"@type":"WebPage","name":"Cardora — Digital Voucher Code Marketplace","url":"https://cardora.com/"}
+  ]
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --bg:#05070d;--bg2:#080b14;--card:#0c111c;--card2:#111827;--border:#222c3d;
+  --purple:#7c3aed;--purple2:#a855f7;--text:#f8fafc;--muted:#9aa5b5;
+  --green:#5ee35e;--red:#ff5c70;--yellow:#facc15;--shadow:0 0 35px rgba(124,58,237,.18)
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+ font-family:Inter,Arial,Helvetica,sans-serif;background:
+ radial-gradient(circle at 20% 10%,rgba(124,58,237,.16),transparent 30%),
+ radial-gradient(circle at 80% 30%,rgba(80,40,180,.12),transparent 30%),
+ linear-gradient(180deg,#05070d,#02040a);color:var(--text);min-height:100vh;overflow-x:hidden
+}
+.background{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+.glow{position:absolute;width:500px;height:500px;border-radius:50%;filter:blur(130px);opacity:.18;background:#7c3aed}
+.glow.one{top:-250px;left:-150px}.glow.two{right:-250px;top:250px;background:#2563eb}
+.grid{position:absolute;inset:0;opacity:.07;background-image:linear-gradient(rgba(255,255,255,.15) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.15) 1px,transparent 1px);background-size:60px 60px}
+header{height:74px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(4,6,12,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:12px;cursor:pointer}.logo-mark{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a855f7);display:grid;place-items:center;font-weight:900;font-size:25px;box-shadow:0 0 25px rgba(124,58,237,.5)}
+.logo-text strong{font-size:22px;display:block}.logo-text span{font-size:12px;color:var(--muted)}
+nav{display:flex;gap:25px;align-items:center}nav a{color:var(--text);text-decoration:none;font-size:14px;font-weight:700;cursor:pointer}nav a:hover{color:#a855f7}
+.nav-actions{display:flex;align-items:center;gap:9px}.icon-btn,.secondary-btn{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:10px;cursor:pointer}
+.icon-btn{width:40px;height:40px;font-size:17px}.sign-btn,.primary-btn{border:0;color:white;background:linear-gradient(135deg,#6d28d9,#8b5cf6);padding:12px 20px;border-radius:10px;font-weight:800;cursor:pointer;box-shadow:0 8px 25px rgba(124,58,237,.25)}
+.secondary-btn{padding:11px 16px;font-weight:700}.primary-btn:hover,.sign-btn:hover,.secondary-btn:hover,.icon-btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.cart{position:relative}.cart-count{position:absolute;top:-5px;right:-5px;min-width:18px;height:18px;border-radius:20px;background:#7c3aed;color:#fff;font-size:10px;display:grid;place-items:center}
+.profile{display:none;align-items:center;gap:7px}.profile.show{display:flex}.profile-email{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.hero{max-width:1250px;margin:auto;padding:80px 28px 35px;display:grid;grid-template-columns:1.05fr .95fr;gap:50px;align-items:center}
+.hero h1{font-size:64px;line-height:1.04;letter-spacing:-3px;margin-bottom:24px}.gradient{background:linear-gradient(90deg,#8b5cf6,#c084fc);-webkit-background-clip:text;color:transparent}
+.hero p{color:#b4bdca;font-size:18px;line-height:1.7;max-width:590px}.hero-buttons{display:flex;gap:14px;margin-top:30px}
+.hero-cards{position:relative;min-height:380px}.hero-card{position:absolute;width:300px;height:190px;border-radius:18px;padding:25px;overflow:hidden;box-shadow:0 25px 60px rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.15)}
+.hero-card img{position:absolute;width:90px;height:90px;right:20px;bottom:20px;object-fit:contain}.hero-card.amazon{background:linear-gradient(135deg,#151515,#020202);transform:rotate(-8deg);left:30px;top:50px}.hero-card.apple{background:linear-gradient(135deg,#222,#050505);transform:rotate(7deg);right:10px;top:0}.hero-card.walmart{background:linear-gradient(135deg,#1471dc,#0751a5);transform:rotate(3deg);left:110px;bottom:0}.hero-card span{font-weight:800;font-size:25px}.hero-card small{display:block;margin-top:10px;opacity:.8}
+.features{max-width:1250px;margin:auto;padding:20px 28px;display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.feature{display:flex;gap:15px;padding:20px;border-right:1px solid var(--border)}.feature-icon{font-size:30px}.feature h3{font-size:15px;margin-bottom:7px}.feature p{font-size:13px;color:var(--muted);line-height:1.5}
+.search-area{max-width:1250px;margin:35px auto 0;padding:0 28px}.search-box{display:flex;border:1px solid var(--border);background:rgba(12,17,28,.85);border-radius:13px;overflow:hidden;box-shadow:var(--shadow)}.search-box input{flex:1;padding:18px;border:0;outline:0;background:transparent;color:var(--text);font-size:15px}.search-box button{margin:6px;padding:0 30px;border:0;border-radius:9px;background:#6d28d9;color:#fff;font-weight:700;cursor:pointer}
+.section{max-width:1250px;margin:45px auto;padding:0 28px}.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.section-title h2{font-size:24px}.section-title span{color:#a855f7;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.gift-card{background:linear-gradient(180deg,#101722,#090d15);border:1px solid var(--border);border-radius:12px;padding:8px;transition:.25s}.gift-card:hover{transform:translateY(-5px);border-color:#6935c7;box-shadow:0 15px 35px rgba(124,58,237,.16)}
+.card-image{height:145px;border-radius:9px;display:grid;place-items:center;position:relative;overflow:hidden}.card-image::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent,rgba(255,255,255,.09),transparent);transform:translateX(-100%);transition:.6s}.gift-card:hover .card-image::after{transform:translateX(100%)}
+.card-image img{width:115px;height:90px;object-fit:contain;z-index:1}.card-image .fallback{z-index:1;font-size:24px;font-weight:900}
+.apple-bg{background:linear-gradient(135deg,#202020,#050505)}.amazon-bg{background:linear-gradient(135deg,#181818,#030303)}.walmart-bg{background:linear-gradient(135deg,#1472d8,#0755aa)}.google-bg{background:#f5f5f5}.steam-bg{background:linear-gradient(135deg,#153557,#071321)}.visa-bg{background:linear-gradient(135deg,#182d79,#061449)}.netflix-bg{background:linear-gradient(135deg,#230707,#070101)}.spotify-bg{background:linear-gradient(135deg,#075c34,#031f12)}.xbox-bg{background:linear-gradient(135deg,#107c10,#063d06)}.playstation-bg{background:linear-gradient(135deg,#174b9b,#071f4d)}.target-bg{background:linear-gradient(135deg,#df1b2f,#780512)}.ebay-bg{background:linear-gradient(135deg,#fff,#ddd)}.uber-bg{background:linear-gradient(135deg,#222,#050505)}.airbnb-bg{background:linear-gradient(135deg,#ff385c,#8d0923)}.nike-bg{background:linear-gradient(135deg,#222,#050505)}.roblox-bg{background:linear-gradient(135deg,#333,#090909)}.discord-bg{background:linear-gradient(135deg,#5865f2,#252b78)}
+.gift-card h3{font-size:14px;margin:14px 6px 5px}.range{margin:0 6px 13px;font-weight:800;font-size:16px}.buy-btn{width:100%;border:0;padding:11px;border-radius:8px;background:#6928e7;color:white;font-weight:700;cursor:pointer}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.step{padding:22px;border:1px solid var(--border);background:rgba(12,17,28,.75);border-radius:13px}.step-icon{font-size:30px;margin-bottom:15px}.step h3{font-size:15px;margin-bottom:8px}.step p{color:var(--muted);font-size:13px;line-height:1.6}
+.sell-section{max-width:900px;margin:70px auto;padding:35px 28px}.sell-box,.dashboard-box{background:linear-gradient(145deg,#101722,#080c14);border:1px solid var(--border);border-radius:18px;padding:30px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.form-group{margin-bottom:16px}.form-group.full{grid-column:1/-1}label{display:block;font-size:13px;margin-bottom:7px;color:#c8d0dc}
+input,select,textarea{width:100%;border:1px solid var(--border);background:#080d16;color:white;border-radius:9px;padding:13px;outline:none}input:focus,select:focus,textarea:focus{border-color:#7c3aed}
+.sell-note{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.25);padding:15px;border-radius:10px;color:#b9a5e9;font-size:13px;line-height:1.5;margin-bottom:20px}
+.dashboard-grid{display:grid;grid-template-columns:1fr;gap:10px}.sale-row{display:grid;grid-template-columns:1.2fr .8fr .8fr .8fr .9fr;gap:10px;align-items:center;padding:15px;border:1px solid var(--border);background:#0b111c;border-radius:10px;font-size:13px}.sale-head{color:#9aa5b5;font-weight:800;font-size:12px}.status-pill{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800}.pending{background:#3b2d08;color:#facc15}.approved{background:#0b3a24;color:#5ee35e}.rejected{background:#3b1017;color:#ff5c70}.sold{background:#172554;color:#93c5fd}.paid{background:#123d2b;color:#86efac}
+footer{border-top:1px solid var(--border);margin-top:70px;padding:40px 28px;text-align:center;color:var(--muted);font-size:13px}
+.modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);display:none;place-items:center;padding:20px}.modal.active{display:grid}.modal-box{width:min(500px,100%);max-height:90vh;overflow:auto;background:#0c111c;border:1px solid #39236a;border-radius:18px;padding:28px;box-shadow:0 30px 100px rgba(0,0,0,.55)}.modal-head{display:flex;justify-content:space-between;margin-bottom:20px}.close{background:none;border:0;color:#9ca3af;font-size:24px;cursor:pointer}.modal h2{margin-bottom:8px}.modal p{color:var(--muted);font-size:13px;line-height:1.6}.modal input{margin-top:10px}.modal .primary-btn{width:100%;margin-top:12px}.status{margin-top:12px;font-size:13px;min-height:20px}.success{color:var(--green)}.error{color:var(--red)}
+.ai-button{position:fixed;right:25px;bottom:25px;z-index:300;border:0;border-radius:30px;padding:15px 22px;color:white;font-weight:800;background:linear-gradient(135deg,#6d28d9,#9333ea);box-shadow:0 10px 40px rgba(124,58,237,.45);cursor:pointer}.ai-panel{position:fixed;right:25px;bottom:85px;width:380px;max-width:calc(100vw - 30px);height:580px;z-index:400;background:#0a0f19;border:1px solid #7135d9;border-radius:20px;box-shadow:0 30px 90px rgba(0,0,0,.65);display:none;overflow:hidden}.ai-panel.active{display:flex;flex-direction:column}.ai-head{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}.ai-title{display:flex;gap:12px;align-items:center}.bot{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#6d28d9,#9333ea);font-size:21px}.ai-messages{flex:1;overflow:auto;padding:16px}.ai-message{padding:14px;background:#111927;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;font-size:13px;line-height:1.5}.ai-options button{display:block;width:100%;padding:14px;margin:8px 0;text-align:left;background:#101827;color:white;border:1px solid var(--border);border-radius:10px;cursor:pointer}.ai-input{display:flex;gap:7px;padding:12px;border-top:1px solid var(--border)}.ai-input input{margin:0}
+.toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%) translateY(100px);z-index:1000;background:#111827;border:1px solid var(--border);padding:14px 20px;border-radius:10px;opacity:0;transition:.3s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{padding:30px;text-align:center;color:var(--muted);border:1px dashed var(--border);border-radius:12px}
+@media(max-width:1050px){.cards{grid-template-columns:repeat(3,1fr)}.hero{grid-template-columns:1fr}.hero-cards{max-width:650px;width:100%;margin:auto}.sale-row{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:750px){.trust-strip{grid-template-columns:1fr 1fr;padding:15px}.trust-item{padding:13px 11px}.trust-item strong{font-size:11px}header{padding:0 15px}.logo-text span,nav{display:none}.hero{padding-top:45px}.hero h1{font-size:43px}.features,.steps{grid-template-columns:1fr}.cards{grid-template-columns:repeat(2,1fr)}.form-grid{grid-template-columns:1fr}.form-group.full{grid-column:auto}.hero-card{width:240px;height:155px}.hero-cards{min-height:330px}.sale-row{grid-template-columns:1fr 1fr}.sale-head{display:none}}
+@media(max-width:480px){.trust-strip{grid-template-columns:1fr}.cards{grid-template-columns:1fr}.sale-row{font-size:12px}.dashboard-box{padding:16px}.hero-card{width:210px;height:135px;padding:17px}.hero-card span{font-size:18px}.ai-panel{right:10px;bottom:80px}}
+
+.trust-strip{max-width:1250px;margin:10px auto 0;padding:18px 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.trust-item{display:flex;align-items:center;gap:12px;padding:16px 14px;border:1px solid rgba(124,58,237,.18);background:linear-gradient(145deg,rgba(17,24,39,.82),rgba(8,12,20,.82));border-radius:14px;box-shadow:0 10px 35px rgba(0,0,0,.12)}.trust-icon{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:rgba(124,58,237,.14);color:#c4b5fd;font-weight:900}.trust-item strong{display:block;font-size:12px}.trust-item small{display:block;margin-top:4px;color:var(--muted);font-size:10px;line-height:1.3}.browse-link{border:0;background:none;color:#b084ff;font-size:13px;font-weight:800;cursor:pointer;padding:8px 0}.browse-link:hover{text-decoration:underline}.auth-box{width:min(470px,100%);padding:30px}.auth-brand{display:flex;gap:11px;align-items:center;margin-bottom:24px}.auth-brand-mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,#6d28d9,#a855f7);font-weight:900;font-size:20px}.auth-brand strong{display:block;font-size:15px}.auth-brand span{display:block;color:var(--muted);font-size:10px;margin-top:2px}.password-wrap{position:relative}.password-wrap input{padding-right:70px}.password-toggle{position:absolute;right:8px;top:8px;border:0;background:transparent;color:#a78bfa;font-size:12px;font-weight:800;cursor:pointer;padding:7px}.auth-create{width:100%;margin-top:10px}.forgot-link{display:block;margin:14px auto 0;border:0;background:none;color:#b084ff;font-size:13px;font-weight:800;cursor:pointer}.auth-divider{display:flex;align-items:center;gap:10px;color:#64748b;font-size:10px;margin:22px 0}.auth-divider:before,.auth-divider:after{content:"";height:1px;background:var(--border);flex:1}.email-tip{margin-top:13px;padding:11px 12px;border-radius:10px;background:rgba(124,58,237,.07);border:1px solid rgba(124,58,237,.18);color:#b7bfd0;font-size:11px;line-height:1.5}.email-tip strong{color:#e5e7eb}.modal label{margin-top:12px}.modal .auth-brand + .modal-head{margin-bottom:18px}
+
+/* Premium welcome landing screen */
+.welcome-screen{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at 50% 35%,rgba(124,58,237,.18),transparent 32%),linear-gradient(135deg,#03040a 0%,#080516 48%,#02050d 100%);transition:opacity .55s ease,visibility .55s ease}
+.welcome-screen.hide{opacity:0;visibility:hidden;pointer-events:none}
+.welcome-grid{position:absolute;inset:0;opacity:.08;background-image:linear-gradient(rgba(255,255,255,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.14) 1px,transparent 1px);background-size:70px 70px;mask-image:linear-gradient(to bottom,black,transparent 90%)}
+.welcome-glow{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.welcome-glow.a{width:420px;height:420px;background:#7c3aed;left:-120px;top:-130px;opacity:.2}.welcome-glow.b{width:380px;height:380px;background:#2563eb;right:-120px;bottom:-120px;opacity:.16}
+.welcome-content{position:relative;z-index:2;text-align:center;width:min(850px,92vw);padding:30px}
+.welcome-badge{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border:1px solid rgba(168,85,247,.32);background:rgba(124,58,237,.09);border-radius:999px;color:#c4b5fd;font-size:12px;font-weight:800;letter-spacing:.3px;margin-bottom:20px}
+.welcome-logo{width:58px;height:58px;margin:0 auto 18px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(135deg,#7c3aed,#a855f7);font-size:31px;font-weight:900;box-shadow:0 15px 45px rgba(124,58,237,.4)}
+.welcome-content h1{font-size:clamp(42px,7vw,76px);line-height:.98;letter-spacing:-3px;margin-bottom:20px}.welcome-content h1 span{background:linear-gradient(90deg,#a78bfa,#c084fc,#8b5cf6);-webkit-background-clip:text;color:transparent}
+.welcome-content>p{max-width:650px;margin:0 auto;color:#aeb8c8;font-size:17px;line-height:1.7}
+.welcome-actions{display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap}.welcome-start{min-width:170px;padding:14px 24px;border:0;border-radius:12px;color:#fff;background:linear-gradient(135deg,#6d28d9,#a855f7);font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 14px 35px rgba(124,58,237,.32);transition:.2s}.welcome-start:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.welcome-note{margin-top:17px;color:#778397;font-size:12px}
+.float-card{position:absolute;z-index:1;width:250px;height:150px;border-radius:18px;padding:20px;text-align:left;border:1px solid rgba(255,255,255,.13);box-shadow:0 28px 65px rgba(0,0,0,.5);overflow:hidden;animation:floatCard 5.5s ease-in-out infinite}
+.float-card:after{content:"";position:absolute;inset:-40% -20%;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.13) 50%,transparent 58%);transform:translateX(-70%);animation:shineCard 5s ease-in-out infinite}
+.float-card strong{font-size:21px;position:relative;z-index:2}.float-card small{display:block;margin-top:8px;color:rgba(255,255,255,.72);position:relative;z-index:2}.float-card .card-symbol{position:absolute;right:18px;bottom:14px;font-size:48px;font-weight:900;opacity:.92;z-index:2}
+.float-card.one{left:5vw;top:18%;background:linear-gradient(135deg,#171717,#030303);transform:rotate(-12deg);animation-delay:-1s}.float-card.two{right:5vw;top:19%;background:linear-gradient(135deg,#166fd0,#084b98);transform:rotate(11deg);animation-delay:-2.5s}.float-card.three{left:9vw;bottom:12%;background:linear-gradient(135deg,#123c2a,#062017);transform:rotate(8deg);animation-delay:-3.5s}.float-card.four{right:9vw;bottom:11%;background:linear-gradient(135deg,#4a1117,#150507);transform:rotate(-8deg);animation-delay:-.5s}
+@keyframes floatCard{0%,100%{translate:0 0}50%{translate:0 -14px}}@keyframes shineCard{0%,55%,100%{transform:translateX(-70%)}70%{transform:translateX(70%)}}
+@media(max-width:900px){.float-card{width:190px;height:120px;padding:15px}.float-card strong{font-size:16px}.float-card .card-symbol{font-size:34px}.float-card.one{left:-25px;top:12%}.float-card.two{right:-25px;top:12%}.float-card.three{left:-35px;bottom:7%}.float-card.four{right:-35px;bottom:7%}}
+@media(max-width:620px){.float-card{opacity:.42;transform:none!important}.welcome-content{padding:18px}.welcome-content>p{font-size:14px}.welcome-content h1{letter-spacing:-2px}.welcome-badge{font-size:11px}}
+
+
+/* Professional information pages */
+.info-modal .modal-box{width:min(900px,100%);max-height:88vh;padding:0;overflow:hidden}
+.info-page{max-height:88vh;overflow:auto;padding:34px}
+.info-page h2{font-size:34px;margin-bottom:10px}.info-page h3{margin:26px 0 9px;font-size:17px}.info-page p,.info-page li{color:#aab3c2;line-height:1.75;font-size:14px}.info-page ul{padding-left:20px;margin-top:10px}.info-page .page-kicker{display:inline-block;padding:7px 12px;border-radius:999px;border:1px solid rgba(168,85,247,.3);color:#c084fc;font-size:10px;font-weight:900;letter-spacing:1.4px;margin-bottom:14px}.info-page .trustpilot-box{margin-top:25px;padding:22px;border:1px solid #273246;border-radius:16px;background:rgba(255,255,255,.025)}.info-page .trustpilot-box strong{display:block;font-size:16px;margin-bottom:7px}.info-page .legal-note{margin-top:25px;padding:16px;border-left:3px solid #8b5cf6;background:rgba(124,58,237,.08);border-radius:8px}.site-footer{display:grid;grid-template-columns:1.3fr repeat(3,1fr);gap:30px;max-width:1250px;margin:70px auto 0;padding:48px 28px;border-top:1px solid var(--border);color:var(--muted)}.site-footer h4{color:#fff;margin-bottom:13px}.site-footer a{display:block;color:var(--muted);text-decoration:none;margin:8px 0;font-size:13px;cursor:pointer}.site-footer a:hover{color:#c084fc}.footer-brand strong{font-size:22px;color:#fff}.footer-brand p{margin-top:10px;line-height:1.6;font-size:12px}.footer-bottom{max-width:1250px;margin:auto;padding:18px 28px 35px;color:#697386;font-size:11px;border-top:1px solid rgba(255,255,255,.05)}@media(max-width:800px){.site-footer{grid-template-columns:1fr 1fr}.info-page{padding:25px}}@media(max-width:520px){.site-footer{grid-template-columns:1fr}.info-page h2{font-size:27px}}
+
+</style>
+</head>
+<body>
+
+<div class="welcome-screen" id="welcomeScreen" aria-label="Welcome to Cardora">
+  <div class="welcome-grid"></div><div class="welcome-glow a"></div><div class="welcome-glow b"></div>
+  <div class="float-card one"><strong>Amazon</strong><small>Gift Card</small><div class="card-symbol">a</div></div>
+  <div class="float-card two"><strong>Walmart</strong><small>Gift Card</small><div class="card-symbol">✦</div></div>
+  <div class="float-card three"><strong>Spotify</strong><small>Gift Card</small><div class="card-symbol">●</div></div>
+  <div class="float-card four"><strong>Netflix</strong><small>Gift Card</small><div class="card-symbol">N</div></div>
+  <div class="welcome-content">
+    <div class="welcome-logo">C</div>
+    <div class="welcome-badge">✦ DIGITAL VOUCHER MARKETPLACE</div>
+    <h1>Welcome to <span>Cardora</span></h1>
+    <p>Buy and sell trusted digital voucher codes with a simple, secure experience. Choose your card, pay with crypto, and receive your voucher digitally.</p>
+    <div class="welcome-actions"><button class="welcome-start" type="button" onclick="enterCardora()">Get Started&nbsp; →</button></div>
+    <div class="welcome-note">✓ Fixed rates &nbsp; • &nbsp; ⚡ Fast processing &nbsp; • &nbsp; 🌍 Worldwide</div>
+  </div>
+</div>
+
+
+<div class="background"><div class="glow one"></div><div class="glow two"></div><div class="grid"></div></div>
+
+<header>
+  <div class="logo" onclick="goHome()">
+    <div class="logo-mark">C</div>
+    <div class="logo-text"><strong>Cardora</strong><span>Voucher Code Marketplace</span></div>
+  </div>
+  <nav>
+    <a onclick="goHome()">Home</a>
+    <a onclick="scrollToSection('cards')">Buy Vouchers</a>
+    <a onclick="openSell()">Sell Vouchers</a>
+    <a onclick="scrollToSection('how')">How It Works</a>
+    <a onclick="openDashboard()">My Sales</a><a onclick="openOrders()">My Orders</a>
+    <a onclick="openHelp()">Help</a><a onclick="openInfoPage('about')">About</a><a onclick="openInfoPage('faq')">FAQ</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="icon-btn" onclick="focusSearch()">⌕</button>
+    <button class="icon-btn cart" onclick="openCart()">🛒<span class="cart-count" id="cartCount">0</span></button>
+    <button class="icon-btn" onclick="openDashboard()">📊</button>
+    <div id="loggedOutActions"><button class="sign-btn" onclick="openLogin()">Sign In</button></div>
+    <div class="profile" id="profile"><span>👤</span><span class="profile-email" id="profileEmail"></span><button class="icon-btn" onclick="signOut()">↪</button></div>
+  </div>
+</header>
+
+<section class="hero" id="home">
+  <div>
+    <h1>Buy & Sell <span class="gradient">Voucher Codes</span></h1>
+    <p>The simple marketplace for buying and selling digital voucher codes. Find popular gift cards, pay securely, and sell eligible vouchers for crypto.</p>
+    <div class="hero-buttons">
+      <button class="primary-btn" onclick="scrollToSection('cards')">Browse Vouchers</button>
+      <button class="secondary-btn" onclick="openSell()">Sell a Voucher</button>
+    </div>
+  </div>
+  <div class="hero-cards">
+    <div class="hero-card amazon"><span>Amazon</span><small>Gift Card</small><img src="https://cdn.simpleicons.org/amazon/ffffff" onerror="this.style.display='none'" alt="Amazon"></div>
+    <div class="hero-card apple"><span>Apple</span><small>Gift Card</small><img src="https://cdn.simpleicons.org/apple/ffffff" onerror="this.style.display='none'" alt="Apple"></div>
+    <div class="hero-card walmart"><span>Walmart</span><small>Gift Card</small><img src="https://cdn.simpleicons.org/walmart/ffffff" onerror="this.style.display='none'" alt="Walmart"></div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature"><div class="feature-icon">🛡️</div><div><h3>Secure & Trusted</h3><p>Verified accounts and protected marketplace features.</p></div></div>
+  <div class="feature"><div class="feature-icon">⚡</div><div><h3>Digital Delivery</h3><p>Approved voucher codes can be delivered after successful payment.</p></div></div>
+  <div class="feature"><div class="feature-icon">₿</div><div><h3>Crypto Payouts</h3><p>Eligible sellers can request cryptocurrency payouts.</p></div></div>
+</section>
+
+<section class="trust-strip" aria-label="Cardora benefits">
+  <div class="trust-item"><span class="trust-icon">✓</span><div><strong>Fixed rates</strong><small>Clear pricing before checkout</small></div></div>
+  <div class="trust-item"><span class="trust-icon">⚡</span><div><strong>Payouts processed within ~24 hours</strong><small>For approved eligible sales</small></div></div>
+  <div class="trust-item"><span class="trust-icon">🌍</span><div><strong>Worldwide</strong><small>Digital vouchers for customers globally</small></div></div>
+  <div class="trust-item"><span class="trust-icon">🔐</span><div><strong>Protected delivery</strong><small>Codes stay private until delivery</small></div></div>
+</section>
+
+<section class="search-area">
+  <div class="search-box"><input id="searchInput" type="text" placeholder="Search for gift cards (Amazon, Apple, Netflix...)" oninput="filterCards()"><button onclick="filterCards()">Search</button></div>
+</section>
+
+<section class="section" id="cards">
+  <div class="section-title"><h2 id="cardsTitle">Popular Gift Cards</h2><button class="browse-link" id="browseAllBtn" type="button" onclick="browseAllVouchers()">Browse all vouchers</button></div>
+  <div class="cards" id="giftCards"></div>
+</section>
+
+<section class="section" id="how">
+  <div class="section-title"><h2>How Cardora Works</h2></div>
+  <div class="steps">
+    <div class="step"><div class="step-icon">🛒</div><h3>1. Buy a Voucher</h3><p>Choose an available voucher and create an order.</p></div>
+    <div class="step"><div class="step-icon">🏷️</div><h3>2. Sell Your Voucher</h3><p>Sign in, submit an eligible voucher and choose your payout option.</p></div>
+    <div class="step"><div class="step-icon">₿</div><h3>3. Get Paid in Crypto</h3><p>Select a supported cryptocurrency for an eligible payout.</p></div>
+    <div class="step"><div class="step-icon">🛡️</div><h3>4. Stay Protected</h3><p>Account verification and server-side review help protect marketplace actions.</p></div>
+  </div>
+</section>
+
+<section class="sell-section" id="sell">
+  <div class="section-title"><h2>Sell Your Voucher</h2></div>
+  <div class="sell-box">
+    <div class="sell-note">🔐 You must be signed in before submitting. Your voucher code is sent to the Cardora server for review and is not displayed publicly.</div>
+    <form id="sellForm">
+      <div class="form-grid">
+        <div class="form-group"><label>Voucher Brand</label><select id="sellBrand" required></select></div>
+        <div class="form-group"><label>Voucher Value</label><select id="sellValue" required><option value="">Choose value</option><option>$10</option><option>$15</option><option>$20</option><option>$25</option><option>$50</option><option>$75</option><option>$100</option><option>$150</option><option>$200</option><option>$250</option><option>$500</option></select></div>
+        <div class="form-group full"><label>Voucher Code</label><input id="voucherCode" type="password" autocomplete="off" placeholder="Enter voucher code" required></div>
+        <div class="form-group"><label>Crypto Payout</label><select id="crypto" required><option value="">Choose payout</option><option>Bitcoin (BTC)</option><option>Ethereum (ETH)</option><option>USDT</option><option>USDC</option><option>Solana (SOL)</option></select></div>
+        <div class="form-group"><label>Wallet Address</label><input id="wallet" type="text" placeholder="Your crypto wallet address" required></div>
+      </div>
+      <button class="primary-btn" type="submit">Submit Voucher</button>
+    </form>
+  </div>
+</section>
+
+<section class="section" id="dashboard">
+  <div class="section-title"><h2>My Sales</h2><span id="dashboardHint">Sign in to view your submissions</span></div>
+  <div class="dashboard-box">
+    <div id="salesList" class="dashboard-grid"><div class="empty">Sign in to view your voucher submissions.</div></div>
+  </div>
+</section>
+
+
+<section class="section" id="orders">
+  <div class="section-title"><h2>My Orders</h2><span>Your purchases and delivery status</span></div>
+  <div class="dashboard-box">
+    <div id="ordersList" class="dashboard-grid">
+      <div class="empty">Sign in to view your orders.</div>
+    </div>
+  </div>
+</section>
+
+<div class="modal" id="checkoutModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div><h2>Crypto Checkout</h2><p id="checkoutSummary">Create your order and choose a payment network.</p></div>
+      <button class="close" onclick="closeCheckout()">×</button>
+    </div>
+    <label>Voucher value (USD)</label>
+    <input id="checkoutAmount" type="number" min="1" step="0.01" placeholder="50">
+    <div class="sell-note" id="checkoutFees">Cardora fees will be calculated before you pay.</div>
+    <label>Payment method</label>
+    <select id="checkoutCrypto">
+      <option value="">Choose cryptocurrency</option>
+      <option value="USDT_TRON">USDT — TRON (TRC-20)</option>
+      <option value="USDC_SOLANA">USDC — Solana (SPL)</option>
+      <option value="SOL">SOL — Solana</option>
+      <option value="BTC">BTC — Bitcoin</option>
+      <option value="ETH">ETH — Ethereum</option>
+    </select>
+    <button class="primary-btn" onclick="createCheckoutOrder()">Create Order</button>
+    <div id="checkoutStatus" class="status"></div>
+  </div>
+</div>
+
+<div class="modal" id="paymentModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div><h2>Complete Payment</h2><p>Send the payment using the exact network shown below.</p></div>
+      <button class="close" onclick="closePayment()">×</button>
+    </div>
+    <div class="sell-note">
+      <strong id="paymentMethodLabel"></strong><br>
+      <span id="paymentNetworkLabel"></span><br><br>
+      <strong>Receiving address</strong><br>
+      <code id="paymentAddress" style="display:block;word-break:break-all;margin-top:7px;color:#fff"></code>
+      <button class="secondary-btn" style="margin-top:10px" onclick="copyPaymentAddress()">Copy address</button>
+      <div id="paymentQrSection" style="display:none;text-align:center;margin-top:18px">
+        <strong id="paymentQrTitle">Scan to pay</strong>
+        <div id="paymentQr" style="display:inline-flex;background:#fff;padding:12px;border-radius:12px;margin-top:10px"></div>
+        <div id="paymentQrNetwork" style="font-size:12px;color:#9aa5b5;margin-top:8px"></div>
+      </div>
+    </div>
+    <p id="paymentUsd"></p>
+    <label>Transaction hash / TXID</label>
+    <input id="txHash" type="text" placeholder="Paste the transaction hash after sending">
+    <button class="primary-btn" onclick="submitPayment()">Submit Payment for Verification</button>
+    <div id="paymentStatus" class="status"></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-brand"><strong>Cardora</strong><p>Digital voucher-code marketplace.<br>Digital voucher codes only — no physical gift cards.</p></div>
+  <div><h4>Explore</h4><a onclick="goHome()">Home</a><a onclick="scrollToSection('cards');browseAllVouchers()">Browse All Vouchers</a><a onclick="openSell()">Sell Vouchers</a><a onclick="scrollToSection('how')">How It Works</a></div>
+  <div><h4>Company</h4><a onclick="openInfoPage('about')">About</a><a onclick="openInfoPage('faq')">FAQ</a><a onclick="openInfoPage('contact')">Contact</a><a onclick="openInfoPage('trust')">Trust & Reviews</a></div>
+  <div><h4>Legal</h4><a onclick="openInfoPage('privacy')">Privacy Policy</a><a onclick="openInfoPage('terms')">Terms of Service</a><a onclick="openInfoPage('security')">Security & Verification</a></div>
+</footer>
+<div class="footer-bottom">© 2026 Cardora. All rights reserved. Cardora provides digital voucher codes only.</div>
+
+<div class="modal" id="loginModal">
+  <div class="modal-box auth-box">
+    <div class="auth-brand"><div class="auth-brand-mark">C</div><div><strong>Cardora</strong><span>Secure digital voucher marketplace</span></div></div>
+    <div class="modal-head"><div><h2>Welcome back</h2><p>Sign in to continue, or create your Cardora account.</p></div><button class="close" onclick="closeLogin()">×</button></div>
+    <label>Email address</label>
+    <input id="loginEmail" type="email" placeholder="Enter your email" autocomplete="email">
+    <label>Password</label>
+    <div class="password-wrap"><input id="loginPassword" type="password" placeholder="Enter your password" autocomplete="current-password"><button type="button" class="password-toggle" onclick="togglePassword('loginPassword',this)">Show</button></div>
+    <button class="primary-btn" type="button" onclick="login()">Sign In</button>
+    <button class="secondary-btn auth-create" type="button" onclick="signup()">Create Account</button>
+    <button class="forgot-link" type="button" onclick="openRecovery()">Forgot password?</button>
+    <div class="auth-divider"><span>Secure email verification</span></div>
+    <label>Verification code</label>
+    <input id="verifyCode" inputmode="numeric" maxlength="6" placeholder="6-digit code" autocomplete="one-time-code">
+    <button class="primary-btn" type="button" onclick="verify()">Verify Email</button>
+    <button class="secondary-btn" style="width:100%;margin-top:10px" type="button" onclick="resendCode()">Resend Code</button>
+    <div class="email-tip">📩 <strong>Didn't receive the code?</strong> Check your Spam or Junk folder. New emails can sometimes be filtered there.</div>
+    <div class="status" id="authStatus"></div>
+  </div>
+</div>
+
+<div class="modal" id="recoveryModal">
+  <div class="modal-box auth-box">
+    <div class="modal-head"><div><h2>Reset your password</h2><p>We'll send a secure 6-digit reset code to your email.</p></div><button class="close" onclick="closeRecovery()">×</button></div>
+    <label>Email address</label><input id="recoveryEmail" type="email" placeholder="Enter your email" autocomplete="email">
+    <button class="primary-btn" type="button" onclick="requestPasswordReset()">Send Reset Code</button>
+    <label style="margin-top:16px">Reset code</label><input id="resetCode" inputmode="numeric" maxlength="6" placeholder="6-digit code" autocomplete="one-time-code">
+    <label>New password</label><div class="password-wrap"><input id="newPassword" type="password" placeholder="At least 8 characters" autocomplete="new-password"><button type="button" class="password-toggle" onclick="togglePassword('newPassword',this)">Show</button></div>
+    <button class="primary-btn" type="button" onclick="resetPassword()">Reset Password</button>
+    <button class="secondary-btn" style="width:100%;margin-top:10px" type="button" onclick="closeRecovery();openLogin()">Back to Sign In</button>
+    <div class="email-tip">📩 Check Spam/Junk if the reset email doesn't appear in your inbox.</div>
+    <div class="status" id="recoveryStatus"></div>
+  </div>
+</div>
+
+<div class="modal" id="cartModal">
+  <div class="modal-box"><div class="modal-head"><h2>Your Cart</h2><button class="close" onclick="closeCart()">×</button></div><div id="cartItems"></div><button class="primary-btn" onclick="checkout()">Continue to Checkout</button></div>
+</div>
+
+<div class="modal" id="helpModal">
+  <div class="modal-box"><div class="modal-head"><h2>Cardora Help</h2><button class="close" onclick="closeHelp()">×</button></div>
+    <p><strong>Buying:</strong><br>Sign in, choose a voucher, add it to your cart and continue to checkout.</p><br>
+    <p><strong>Selling:</strong><br>Sign in first, submit the brand, value, voucher code and payout information. Your submission appears in My Sales.</p><br>
+    <p><strong>Verification:</strong><br>Create your account and enter the verification code from the Cardora server/email system.</p><br>
+    <p><strong>Voucher code:</strong><br>Codes are not shown publicly. Admin/backend access is required to review submitted codes.</p>
+  </div>
+</div>
+
+<button class="ai-button" onclick="toggleAI()">🤖 Ask Cardora AI</button>
+<div class="modal info-modal" id="infoModal">
+  <div class="modal-box">
+    <div class="info-page" id="infoPage"></div>
+  </div>
+</div>
+
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-head"><div class="ai-title"><div class="bot">🤖</div><div><strong>Cardora AI Assistant</strong><div style="font-size:12px;color:#9ca3af">Your smart Cardora helper</div></div></div><button class="close" onclick="toggleAI()">×</button></div>
+  <div class="ai-messages" id="aiMessages">
+    <div class="ai-message">Hi! I'm Cardora AI 👋<br>How can I help you today?</div>
+    <div class="ai-options">
+      <button onclick="aiAnswer('buy')">🔎 Find a voucher<br><small>Find the voucher you want</small></button>
+      <button onclick="aiAnswer('howbuy')">🛒 How to buy<br><small>Learn how to buy vouchers</small></button>
+      <button onclick="aiAnswer('sell')">🏷️ How to sell<br><small>Learn how to sell your voucher</small></button>
+      <button onclick="aiAnswer('crypto')">₿ Crypto payout<br><small>Learn about crypto payouts</small></button>
+      <button onclick="aiAnswer('login')">🔐 Sign in<br><small>Get help signing in</small></button>
+      <button onclick="aiAnswer('track')">📊 Track my sale<br><small>See your seller submissions</small></button>
+    </div>
+  </div>
+  <div class="ai-input"><input id="aiInput" type="text" placeholder="Type your question..." onkeydown="if(event.key==='Enter')askAI()"><button class="primary-btn" onclick="askAI()">➤</button></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+
+<script>
+let user=null;
+let cart=[];
+let sales=[];
+let orders=[];
+let pendingCheckout=null;
+let paymentOrderId=null;
+
+const brands=[
+ ["Apple","$10 – $200","apple-bg","https://cdn.simpleicons.org/apple/ffffff"],
+ ["Amazon","$10 – $200","amazon-bg","https://cdn.simpleicons.org/amazon/ffffff"],
+ ["Walmart","$10 – $200","walmart-bg","https://cdn.simpleicons.org/walmart/ffffff"],
+ ["Google Play","$10 – $100","google-bg","https://cdn.simpleicons.org/googleplay/000000"],
+ ["Steam","$10 – $100","steam-bg","https://cdn.simpleicons.org/steam/ffffff"],
+ ["Visa","$25 – $500","visa-bg","https://cdn.simpleicons.org/visa/ffffff"],
+ ["Visa Vanilla","$25 – $500","visa-bg","https://cdn.simpleicons.org/visa/ffffff"],
+ ["Mastercard","$25 – $500","visa-bg","https://cdn.simpleicons.org/mastercard/ffffff"],
+ ["American Express","$25 – $500","visa-bg","https://cdn.simpleicons.org/americanexpress/ffffff"],
+ ["Netflix","$15 – $100","netflix-bg","https://cdn.simpleicons.org/netflix/ffffff"],
+ ["Spotify","$10 – $100","spotify-bg","https://cdn.simpleicons.org/spotify/ffffff"],
+ ["Xbox","$10 – $100","xbox-bg","https://cdn.simpleicons.org/xbox/ffffff"],
+ ["PlayStation","$10 – $200","playstation-bg","https://cdn.simpleicons.org/playstation/ffffff"],
+ ["Target","$10 – $200","target-bg","https://cdn.simpleicons.org/target/ffffff"],
+ ["eBay","$10 – $200","ebay-bg","https://cdn.simpleicons.org/ebay/000000"],
+ ["Uber","$10 – $200","uber-bg","https://cdn.simpleicons.org/uber/ffffff"],
+ ["Airbnb","$25 – $500","airbnb-bg","https://cdn.simpleicons.org/airbnb/ffffff"],
+ ["Nike","$10 – $250","nike-bg","https://cdn.simpleicons.org/nike/ffffff"],
+ ["Adidas","$10 – $250","nike-bg","https://cdn.simpleicons.org/adidas/ffffff"],
+ ["Roblox","$10 – $100","roblox-bg","https://cdn.simpleicons.org/roblox/ffffff"],
+ ["Discord","$10 – $100","discord-bg","https://cdn.simpleicons.org/discord/ffffff"],
+ ["Starbucks","$10 – $200","spotify-bg","https://cdn.simpleicons.org/starbucks/ffffff"],
+ ["Sephora","$10 – $250","nike-bg","https://cdn.simpleicons.org/sephora/ffffff"],
+ ["Best Buy","$10 – $500","visa-bg","https://cdn.simpleicons.org/bestbuy/ffffff"],
+ ["Home Depot","$10 – $500","target-bg","https://cdn.simpleicons.org/homedepot/ffffff"],
+ ["Lowe’s","$10 – $500","target-bg","https://cdn.simpleicons.org/lowes/ffffff"],
+ ["DoorDash","$10 – $200","target-bg","https://cdn.simpleicons.org/doordash/ffffff"],
+ ["PaysafeCard","$10 – $200","visa-bg","https://cdn.simpleicons.org/paysafecard/ffffff"],
+ ["Razer Gold","$10 – $200","xbox-bg","https://cdn.simpleicons.org/razer/ffffff"]
+];
+
+function headers(){
+  const h={"Content-Type":"application/json"};
+  if(user?.token) h.Authorization="Bearer "+user.token;
+  return h;
+}
+
+async function request(url, options={}){
+  const r=await fetch(url,{...options,headers:{...headers(),...(options.headers||{})}});
+  let j={}; try{j=await r.json()}catch{}
+  if(!r.ok) throw Error(j.error||j.message||"Request failed");
+  return j;
+}
+function api(url,data){return request(url,{method:"POST",body:JSON.stringify(data||{})})}
+function getApi(url){return request(url)}
+function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function goHome(){window.scrollTo({top:0,behavior:"smooth"})}
+function scrollToSection(id){document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"})}
+function focusSearch(){scrollToSection("cards");setTimeout(()=>document.getElementById("searchInput").focus(),400)}
+
+let showAllVouchers=false;
+function renderCards(){
+ const q=document.getElementById("searchInput").value.toLowerCase().trim();
+ let list=brands.filter(b=>b[0].toLowerCase().includes(q));
+ if(!showAllVouchers && !q) list=list.slice(0,10);
+ document.getElementById("giftCards").innerHTML=list.map(b=>`
+  <div class="gift-card">
+   <div class="card-image ${b[2]}">
+    <img src="${b[3]}" alt="${esc(b[0])}" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+    <div class="fallback" style="display:none">${esc(b[0])}</div>
+   </div>
+   <h3>${esc(b[0])} Gift Card</h3>
+   <div class="range">${esc(b[1])}</div>
+   <button class="buy-btn" onclick="buyVoucher('${esc(b[0])}','${esc(b[1])}')">Buy Now</button>
+  </div>`).join("") || '<div class="empty" style="grid-column:1/-1">No vouchers found.</div>';
+}
+function filterCards(){showAllVouchers=true;renderCards()}
+function browseAllVouchers(){
+ showAllVouchers=true;
+ document.getElementById("searchInput").value="";
+ document.getElementById("cardsTitle").textContent="All Gift Cards";
+ document.getElementById("browseAllBtn").textContent="Showing all vouchers";
+ renderCards();
+ scrollToSection("cards");
+}
+function fillBrands(){document.getElementById("sellBrand").innerHTML='<option value="">Choose brand</option>'+brands.map(b=>`<option>${esc(b[0])}</option>`).join("")}
+
+function openLogin(){document.getElementById("loginModal").classList.add("active")}
+function closeLogin(){document.getElementById("loginModal").classList.remove("active")}
+
+function togglePassword(id,btn){
+ const input=document.getElementById(id);
+ input.type=input.type==="password"?"text":"password";
+ btn.textContent=input.type==="password"?"Show":"Hide";
+}
+function openRecovery(){
+ document.getElementById("recoveryEmail").value=document.getElementById("loginEmail").value.trim();
+ document.getElementById("recoveryStatus").textContent="";
+ document.getElementById("loginModal").classList.remove("active");
+ document.getElementById("recoveryModal").classList.add("active");
+}
+function closeRecovery(){document.getElementById("recoveryModal").classList.remove("active")}
+async function requestPasswordReset(){
+ const email=document.getElementById("recoveryEmail").value.trim();
+ const status=document.getElementById("recoveryStatus");
+ if(!email){status.className="status error";status.textContent="Enter your email address.";return}
+ status.className="status";status.textContent="Sending reset code...";
+ try{const j=await api("/api/forgot-password",{email});status.className="status success";status.textContent=j.message||"Check your email for the reset code."}
+ catch(e){status.className="status error";status.textContent=e.message}
+}
+async function resetPassword(){
+ const email=document.getElementById("recoveryEmail").value.trim();
+ const code=document.getElementById("resetCode").value.trim();
+ const password=document.getElementById("newPassword").value;
+ const status=document.getElementById("recoveryStatus");
+ if(!email||!code||!password){status.className="status error";status.textContent="Complete your email, reset code and new password.";return}
+ if(password.length<8){status.className="status error";status.textContent="New password must be at least 8 characters.";return}
+ status.className="status";status.textContent="Resetting password...";
+ try{const j=await api("/api/reset-password",{email,code,password});status.className="status success";status.textContent=j.message||"Password reset successfully.";setTimeout(()=>{closeRecovery();openLogin();document.getElementById("authStatus").className="status success";document.getElementById("authStatus").textContent="Password reset. You can sign in now."},900)}
+ catch(e){status.className="status error";status.textContent=e.message}
+}
+
+async function signup(){
+ const email=document.getElementById("loginEmail").value.trim();
+ const password=document.getElementById("loginPassword").value;
+ const status=document.getElementById("authStatus");
+ if(!email||!password){status.className="status error";status.textContent="Enter your email and password.";return}
+ status.className="status";status.textContent="Creating account and sending your code...";
+ try{
+   const j=await api("/api/signup",{email,password});
+   status.className="status success";
+   status.textContent=j.message||"Check your email for the verification code.";
+ }catch(e){status.className="status error";status.textContent=e.message}
+}
+
+async function resendCode(){
+ const email=document.getElementById("loginEmail").value.trim();
+ const status=document.getElementById("authStatus");
+ if(!email){status.className="status error";status.textContent="Enter your email first.";return}
+ try{
+   const j=await api("/api/resend-code",{email});
+   status.className="status success";status.textContent=j.message;
+ }catch(e){status.className="status error";status.textContent=e.message}
+}
+
+async function verify(){
+ const email=document.getElementById("loginEmail").value.trim();
+ const code=document.getElementById("verifyCode").value.trim();
+ const status=document.getElementById("authStatus");
+ if(!email||!code){status.className="status error";status.textContent="Enter your email and verification code.";return}
+ try{
+   const j=await api("/api/verify",{email,code});
+   user=j.user;
+   localStorage.setItem("cardora-user",JSON.stringify(user));
+   updateAuthUI(user);closeLogin();showToast("Email verified. You're signed in!");
+   await Promise.all([loadSales(),loadOrders()]);
+ }catch(e){status.className="status error";status.textContent=e.message}
+}
+
+async function login(){
+ const email=document.getElementById("loginEmail").value.trim();
+ const password=document.getElementById("loginPassword").value;
+ const status=document.getElementById("authStatus");
+ if(!email||!password){status.className="status error";status.textContent="Enter your email and password.";return}
+ try{
+   const j=await api("/api/login",{email,password});
+   user=j.user;
+   localStorage.setItem("cardora-user",JSON.stringify(user));
+   updateAuthUI(user);closeLogin();showToast("You're signed in to Cardora!");
+   await Promise.all([loadSales(),loadOrders()]);
+ }catch(e){status.className="status error";status.textContent=e.message}
+}
+
+function updateAuthUI(u){
+ const out=document.getElementById("loggedOutActions"),profile=document.getElementById("profile"),email=document.getElementById("profileEmail");
+ if(u){
+   out.style.display="none";profile.classList.add("show");email.textContent=u.email||"Cardora User";
+   document.getElementById("dashboardHint").textContent="Your voucher submissions";
+ }else{
+   out.style.display="block";profile.classList.remove("show");email.textContent="";
+   document.getElementById("dashboardHint").textContent="Sign in to view your submissions";
+ }
+}
+
+async function signOut(){
+ try{if(user?.token) await api("/api/logout",{})}catch{}
+ user=null;localStorage.removeItem("cardora-user");sales=[];orders=[];
+ updateAuthUI(null);renderSales();renderOrders();showToast("Signed out.");
+}
+
+function openSell(){
+ if(!user){openLogin();showToast("Please sign in before selling a voucher.");return}
+ scrollToSection("sell");
+}
+
+document.getElementById("sellForm").addEventListener("submit",async function(e){
+ e.preventDefault();
+ if(!user){openLogin();return}
+ const payload={
+   brand:document.getElementById("sellBrand").value,
+   amount:document.getElementById("sellValue").value.replace("$",""),
+   code:document.getElementById("voucherCode").value.trim(),
+   payoutMethod:document.getElementById("crypto").value,
+   wallet:document.getElementById("wallet").value.trim()
+ };
+ if(!payload.brand||!payload.amount||!payload.code||!payload.payoutMethod||!payload.wallet){
+   showToast("Please complete all seller fields.");return
+ }
+ try{
+   const j=await api("/api/sell",payload);
+   showToast((j.message||"Voucher submitted.")+" ID: "+(j.submission?.submissionId||""));
+   this.reset();await loadSales();
+ }catch(err){showToast(err.message)}
+});
+
+function buyVoucher(name,range){
+ if(!user){openLogin();showToast("Please sign in before buying a voucher.");return}
+ cart.push({name,range});updateCart();showToast(name+" added to your cart.");
+}
+function updateCart(){document.getElementById("cartCount").textContent=cart.length}
+function openCart(){renderCart();document.getElementById("cartModal").classList.add("active")}
+function closeCart(){document.getElementById("cartModal").classList.remove("active")}
+function renderCart(){
+ const c=document.getElementById("cartItems");
+ if(!cart.length){c.innerHTML='<div class="empty">🛒<br><br>Your cart is empty.</div>';return}
+ c.innerHTML=cart.map((x,i)=>`<div style="padding:12px 0;border-bottom:1px solid #222c3d;display:flex;justify-content:space-between;gap:10px"><div><strong>${esc(x.name)}</strong><br><small style="color:#9aa5b5">${esc(x.range)}</small></div><button class="secondary-btn" onclick="removeCartItem(${i})">Remove</button></div>`).join("");
+}
+function removeCartItem(i){cart.splice(i,1);updateCart();renderCart()}
+
+async function checkout(){
+ if(!user){closeCart();openLogin();showToast("Please sign in before checkout.");return}
+ if(!cart.length){showToast("Your cart is empty.");return}
+ const item=cart[0];
+ pendingCheckout={brand:item.name};
+ document.getElementById("checkoutAmount").value="";
+ document.getElementById("checkoutCrypto").value="";
+ document.getElementById("checkoutSummary").textContent="Buying "+item.name+" Gift Card";
+ document.getElementById("checkoutStatus").textContent="";
+ document.getElementById("checkoutFees").textContent="Cardora buyer fee: 3% + $0.50. Seller payout is 78% of voucher face value.";
+ document.getElementById("checkoutModal").classList.add("active");
+}
+
+function closeCheckout(){document.getElementById("checkoutModal").classList.remove("active")}
+
+async function createCheckoutOrder(){
+  const amount=Number(document.getElementById("checkoutAmount").value);
+  const cryptoKey=document.getElementById("checkoutCrypto").value;
+  const status=document.getElementById("checkoutStatus");
+  if(!amount||amount<=0||!cryptoKey){status.className="status error";status.textContent="Enter the voucher value and choose a cryptocurrency.";return}
+  try{
+    const j=await api("/api/orders",{brand:pendingCheckout.brand,amount});
+    paymentOrderId=j.order.id;
+    const paymentResponse=await getApi("/api/payment-options");
+    const options=paymentResponse.options||[];
+    const chosen=options.find(x=>x.key===cryptoKey);
+    if(!chosen)throw Error("Payment option unavailable.");
+    closeCheckout();
+    document.getElementById("paymentMethodLabel").textContent=chosen.label;
+    document.getElementById("paymentNetworkLabel").textContent=chosen.network;
+    document.getElementById("paymentAddress").textContent=chosen.address;
+    document.getElementById("paymentUsd").textContent="Order total: $"+Number(j.order.totalUsd).toFixed(2)+" USD";
+    document.getElementById("txHash").value="";
+    document.getElementById("paymentStatus").className="status";
+    document.getElementById("paymentStatus").textContent="";
+    const qrSection=document.getElementById("paymentQrSection");
+    const qrBox=document.getElementById("paymentQr");
+    qrBox.innerHTML="";
+    qrSection.style.display="block";
+    document.getElementById("paymentQrTitle").textContent="Scan to pay with "+chosen.symbol;
+    document.getElementById("paymentQrNetwork").textContent="Network: "+chosen.network;
+    new QRCode(qrBox,{text:chosen.address,width:180,height:180,correctLevel:QRCode.CorrectLevel.M});
+    document.getElementById("paymentModal").classList.add("active");
+  }catch(e){status.className="status error";status.textContent=e.message}
+}
+
+function closePayment(){document.getElementById("paymentModal").classList.remove("active")}
+async function copyPaymentAddress(){
+ try{await navigator.clipboard.writeText(document.getElementById("paymentAddress").textContent);showToast("Address copied.")}catch{showToast("Copy failed. Select and copy the address.")}
+}
+
+async function submitPayment(){
+  const cryptoKey=document.getElementById("checkoutCrypto").value;
+  const txHash=document.getElementById("txHash").value.trim();
+  const status=document.getElementById("paymentStatus");
+  if(!txHash){status.className="status error";status.textContent="Paste the transaction hash.";return}
+  try{
+    await api("/api/orders/"+encodeURIComponent(paymentOrderId)+"/payment",{crypto:cryptoKey,txHash});
+    cart=[];updateCart();renderCart();closePayment();await loadOrders();showToast("Payment submitted successfully. Waiting for verification.");
+  }catch(e){status.className="status error";status.textContent=e.message}
+}
+
+function openDashboard(){
+ if(!user){openLogin();showToast("Sign in to view My Sales.");return}
+ scrollToSection("dashboard");loadSales();
+}
+async function loadSales(){
+ if(!user){renderSales();return}
+ try{const j=await getApi("/api/my-sales");sales=j.sales||[];renderSales()}
+ catch(e){
+   if(e.message.toLowerCase().includes("sign in")) signOut();
+   else showToast(e.message);
+ }
+}
+function renderSales(){
+ const box=document.getElementById("salesList");
+ if(!user){box.innerHTML='<div class="empty">Sign in to view your voucher submissions.</div>';return}
+ if(!sales.length){box.innerHTML='<div class="empty">No voucher submissions yet. Submit a voucher and it will appear here.</div>';return}
+ box.innerHTML=`
+  <div class="sale-row sale-head"><span>Voucher</span><span>Value</span><span>Status</span><span>Payout</span><span>Submission</span></div>
+  ${sales.map(s=>`<div class="sale-row">
+   <span><strong>${esc(s.brand||"Voucher")}</strong></span>
+   <span>$${Number(s.amount||0).toFixed(2)}</span>
+   <span><span class="status-pill ${["approved","rejected","sold","paid"].includes(String(s.status).toLowerCase())?String(s.status).toLowerCase():"pending"}">${esc(s.status||"Pending")}</span></span>
+   <span>${esc(s.payoutMethod||"-")}<br><strong>$${Number(s.payoutAmount||0).toFixed(2)}</strong></span>
+   <span><strong>${esc(s.id||"-")}</strong><br><small style="color:#9aa5b5">78% payout</small></span>
+  </div>`).join("")}`;
+}
+
+function openOrders(){
+ if(!user){openLogin();showToast("Sign in to view My Orders.");return}
+ scrollToSection("orders");loadOrders();
+}
+async function loadOrders(){
+ if(!user){renderOrders();return}
+ try{const j=await getApi("/api/my-orders");orders=j.orders||[];renderOrders()}
+ catch(e){showToast(e.message)}
+}
+function renderOrders(){
+ const box=document.getElementById("ordersList");
+ if(!user){box.innerHTML='<div class="empty">Sign in to view your orders.</div>';return}
+ if(!orders.length){box.innerHTML='<div class="empty">No orders yet.</div>';return}
+ box.innerHTML=orders.map(o=>`
+  <div style="padding:18px;border:1px solid var(--border);background:#0b111c;border-radius:12px;margin-bottom:10px">
+   <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <strong>${esc(o.brand)} Gift Card</strong>
+    <span class="status-pill ${o.status==="delivered"?"approved":o.status==="payment_verified"?"approved":"pending"}">${esc(o.status)}</span>
+   </div>
+   <p style="margin-top:8px;color:#9aa5b5;font-size:13px">Order ${esc(o.id)} · Total $${Number(o.totalUsd||0).toFixed(2)}</p>
+   ${o.crypto?`<p style="margin-top:5px;color:#9aa5b5;font-size:13px">${esc(o.crypto)} — ${esc(o.paymentNetwork||"")}</p>`:""}
+   ${o.delivered?`<button class="primary-btn" style="margin-top:12px" onclick="viewVoucherCode('${esc(o.id)}')">🔐 View Voucher Code</button>`:
+     `<p style="margin-top:12px;color:#9aa5b5;font-size:13px">${o.paymentStatus==="payment_submitted"?"Payment submitted — waiting for verification.":"Choose crypto and complete payment from checkout."}</p>`}
+  </div>`).join("");
+}
+
+async function viewVoucherCode(id){
+ try{
+   const j=await getApi("/api/my-orders/"+encodeURIComponent(id));
+   if(j.order?.voucherCode) alert("Your voucher code:\n\n"+j.order.voucherCode);
+   else showToast("Voucher code is not ready yet.");
+ }catch(e){showToast(e.message)}
+}
+
+function closeInfoPage(){document.getElementById("infoModal").classList.remove("active")}
+function openInfoPage(page){
+ const data={
+  about:{k:"ABOUT CARDORA",t:"Cardora — Digital Voucher Codes",b:`<p>Cardora is a marketplace designed for buying and selling eligible <strong>digital voucher codes</strong>.</p><p>Cardora focuses on a simple digital experience: browse available codes, complete checkout, receive eligible codes digitally, or submit your own eligible code for review.</p><div class="legal-note"><strong>Digital only:</strong> Cardora sells digital voucher codes only. Cardora does not sell or ship physical gift cards.</div>`},
+  how:{k:"HOW IT WORKS",t:"Simple from start to finish",b:`<h3>1. Browse</h3><p>Browse available digital voucher codes and choose the voucher you want.</p><h3>2. Buy</h3><p>Sign in, add an eligible voucher to your cart and continue to checkout.</p><h3>3. Pay</h3><p>Complete the supported cryptocurrency payment process and submit the transaction hash for verification.</p><h3>4. Receive</h3><p>After the payment and order checks are completed, an eligible digital voucher code is made available through your order.</p><h3>5. Sell</h3><p>Sign in, submit an eligible voucher code and crypto payout wallet, then track the review in My Sales.</p>`},
+  faq:{k:"FREQUENTLY ASKED QUESTIONS",t:"Cardora FAQ",b:`<h3>Does Cardora sell physical gift cards?</h3><p>No. Cardora sells <strong>digital voucher codes only</strong>.</p><h3>How do I buy a voucher?</h3><p>Sign in, choose an available voucher, add it to your cart and complete checkout.</p><h3>How do I sell a voucher?</h3><p>Sign in and use Sell Vouchers to submit an eligible code for review.</p><h3>When do sellers get paid?</h3><p>Approved eligible sales are processed according to Cardora's payout process. The site currently communicates an approximate 24-hour processing target; actual timing can vary.</p><h3>Where is my voucher code?</h3><p>Open My Orders. A voucher code is shown only when the order has been approved for delivery.</p><h3>What if I do not receive my login code?</h3><p>Check your Spam or Junk folder as well as your inbox. New verification emails can sometimes be filtered there.</p>`},
+  contact:{k:"CONTACT",t:"Contact Cardora",b:`<p>Need help with an account, order, voucher submission or payment verification?</p><h3>Customer Support</h3><p>Use the <strong>Help</strong> button on the Cardora website and provide your order or submission reference when contacting support.</p><div class="legal-note"><strong>Safety:</strong> Never send your password, email verification code or private wallet recovery phrase to anyone claiming to be Cardora support.</div>`},
+  privacy:{k:"LEGAL",t:"Privacy Policy",b:`<p>Cardora is designed to collect and use information needed to operate accounts, verify marketplace activity, process orders and provide support.</p><h3>Information we may process</h3><ul><li>Account and contact information used for authentication.</li><li>Order, voucher-submission and payment-verification information.</li><li>Wallet addresses supplied for supported payouts or payments.</li><li>Technical information needed to secure and operate the website.</li></ul><h3>Voucher codes</h3><p>Voucher codes submitted for sale are handled for review and marketplace processing. They should never be displayed publicly.</p><p>This page is an informational starting point and should be reviewed against Cardora's actual data practices before launch.</p>`},
+  terms:{k:"LEGAL",t:"Terms of Service",b:`<p>By using Cardora, users agree to use the marketplace lawfully and provide accurate information.</p><h3>Digital voucher codes</h3><p>Cardora supports eligible digital voucher codes only. Physical gift cards are not part of the marketplace.</p><h3>Seller submissions</h3><p>Submitted voucher codes may be reviewed before approval. Cardora may reject submissions that do not meet its marketplace requirements.</p><h3>Payments</h3><p>Orders can require payment verification before delivery. Users must provide accurate transaction information.</p><h3>Accounts</h3><p>Users are responsible for protecting their account credentials and verification codes.</p><p>This is a site draft and should be reviewed for your final legal requirements before launch.</p>`},
+  security:{k:"TRUST & SAFETY",t:"Security & Verification",b:`<p>Cardora uses account verification, server-side review and payment verification to help protect marketplace activity.</p><div class="trustpilot-box"><strong>⭐ Trustpilot</strong><p>Cardora can display its <strong>real Trustpilot profile and verified reviews</strong> here once the official Trustpilot business profile is established. No fake rating or fabricated reviews are used.</p></div><h3>Customer safety</h3><p>Cardora will never ask customers to publish private voucher codes, passwords or recovery phrases.</p>`}
+ };
+ const x=data[page]||data.about;
+ document.getElementById("infoPage").innerHTML=`<span class="page-kicker">${x.k}</span><div style="display:flex;justify-content:space-between;gap:15px;align-items:start"><div><h2>${x.t}</h2></div><button class="close" onclick="closeInfoPage()">×</button></div>${x.b}`;
+ document.getElementById("infoModal").classList.add("active");
+}
+
+function openHelp(){document.getElementById("helpModal").classList.add("active")}
+function closeHelp(){document.getElementById("helpModal").classList.remove("active")}
+function toggleAI(){document.getElementById("aiPanel").classList.toggle("active")}
+function aiAnswer(type){
+ const m=document.getElementById("aiMessages");let t="";
+ if(type==="buy")t="Browse the gift cards and click Buy Now. You must be signed in before Cardora creates an order.";
+ if(type==="howbuy")t="Choose a voucher, click Buy Now, open your cart and continue to crypto checkout.";
+ if(type==="sell")t="Sign in, submit your brand, value, voucher code and crypto payout wallet. Then track the submission under My Sales.";
+ if(type==="crypto")t="Cardora supports USDT on TRON, USDC on Solana, SOL on Solana, BTC and ETH for checkout.";
+ if(type==="login")t="Create an account, check your email for the 6-digit code, verify it, then sign in.";
+ if(type==="track")t="My Sales shows your submission ID, status and your 78% payout amount. My Orders shows purchases.";
+ m.innerHTML+=`<div class="ai-message"><strong>Cardora AI:</strong><br>${esc(t)}</div>`;m.scrollTop=m.scrollHeight
+}
+function askAI(){
+ const i=document.getElementById("aiInput"),q=i.value.trim();if(!q)return;
+ const m=document.getElementById("aiMessages");m.innerHTML+=`<div class="ai-message"><strong>You:</strong><br>${esc(q)}</div>`;
+ const l=q.toLowerCase();let a="I can help with buying vouchers, selling vouchers, email verification, crypto checkout and tracking.";
+ if(l.includes("sell"))a="Sign in and open Sell Vouchers. Enter the brand, value, voucher code and your crypto payout wallet.";
+ else if(l.includes("buy"))a="Choose a voucher, add it to your cart, then continue to crypto checkout.";
+ else if(l.includes("verify")||l.includes("code"))a="After creating your account, check your email for the 6-digit Cardora verification code.";
+ else if(l.includes("track")||l.includes("sale"))a="Open My Sales to see your submission ID, review status and 78% payout.";
+ else if(l.includes("order"))a="Open My Orders to see your purchase and payment status.";
+ else if(l.includes("crypto"))a="Cardora checkout supports USDT TRC-20, USDC Solana, SOL, BTC and ETH.";
+ setTimeout(()=>{m.innerHTML+=`<div class="ai-message"><strong>Cardora AI:</strong><br>${esc(a)}</div>`;m.scrollTop=m.scrollHeight},250);i.value=""
+}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000)}
+
+function enterCardora(){
+ const screen=document.getElementById("welcomeScreen");
+ screen.classList.add("hide");
+ setTimeout(()=>{screen.style.display="none";},600);
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function init(){
+ document.getElementById("searchInput").value="";
+ showAllVouchers=false;
+ document.getElementById("cardsTitle").textContent="Popular Gift Cards";
+ document.getElementById("browseAllBtn").textContent="Browse all vouchers";
+ fillBrands();renderCards();updateCart();renderSales();renderOrders();
+ try{
+   const saved=JSON.parse(localStorage.getItem("cardora-user")||"null");
+   if(saved?.token){user=saved;updateAuthUI(user);loadSales();loadOrders()}
+   else if(saved){localStorage.removeItem("cardora-user")}
+ }catch{localStorage.removeItem("cardora-user")}
+}
+init();
+</script>
+
+</body>
+</html>
