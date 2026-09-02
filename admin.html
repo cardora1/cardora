@@ -26,10 +26,12 @@
 <div class="panel" style="margin-top:20px"><h2>Orders & Payment Verification</h2><div id="orders" class="table-wrap"></div></div>
 </div></main>
 <script>
+<script>
+var API_BASE="https://cardora-wgf4.onrender.com";
 var token=null,vouchers=[],orders=[];
 function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
 function headers(){return {"Content-Type":"application/json","Authorization":"Bearer "+token};}
-function req(url,opt){opt=opt||{};opt.headers=headers();return fetch(url,opt).then(function(r){return r.text().then(function(t){var j={};try{j=t?JSON.parse(t):{}}catch(e){}if(!r.ok)throw Error(j.error||"Request failed.");return j;});});}
+fetch(API_BASE+url,opt){opt=opt||{};opt.headers=headers();return fetch(url,opt).then(function(r){return r.text().then(function(t){var j={};try{j=t?JSON.parse(t):{}}catch(e){}if(!r.ok)throw Error(j.error||"Request failed.");return j;});});}
 function post(url,data){return req(url,{method:"POST",body:JSON.stringify(data||{})});}
 function adminLogin(){var m=document.getElementById("loginMsg");post("/api/admin/login",{email:document.getElementById("email").value.trim(),password:document.getElementById("password").value}).then(function(j){token=j.user.token;localStorage.setItem("cardora-admin-token",token);showDash();loadAll();}).catch(function(e){m.className="msg error";m.textContent=e.message;});}
 function showDash(){document.getElementById("loginView").classList.add("hidden");document.getElementById("dashboard").classList.remove("hidden");document.getElementById("logoutBtn").classList.remove("hidden");}
@@ -61,7 +63,7 @@ function verifyPayment(id){post("/api/admin/orders/"+encodeURIComponent(id)+"/ve
 function assignVoucher(id){var el=document.getElementById("voucher-"+id);var v=el&&el.value;if(!v){alert("Choose an approved voucher.");return;}post("/api/admin/orders/"+encodeURIComponent(id)+"/assign-voucher",{voucherId:v}).then(function(j){alert(j.message||"Voucher assigned.");loadAll();}).catch(function(e){alert(e.message);});}
 function deliver(id){post("/api/admin/orders/"+encodeURIComponent(id)+"/deliver",{}).then(loadAll).catch(function(e){alert(e.message);});}
 function loadManualBrands(){
-  fetch("/api/cards").then(function(r){return r.json();}).then(function(cards){
+ fetch(API_BASE+"/api/cards").then(function(r){return r.json();}).then(function(cards){
     var s=document.getElementById("manualBrand");
     s.innerHTML='<option value="">Choose brand</option>'+cards.map(function(c){return '<option value="'+esc(c.brand)+'">'+esc(c.brand)+'</option>';}).join("");
   }).catch(function(){});
