@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Cardora Admin</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#05070d;color:#f8fafc;font-family:Arial,Helvetica,sans-serif}header{height:70px;padding:0 25px;display:flex;align-items:center;justify-content:space-between;background:#080b14;border-bottom:1px solid #222c3d}.logo{display:flex;gap:10px;align-items:center;font-size:22px;font-weight:900}.mark{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#7c3aed,#a855f7)}button{cursor:pointer;border-radius:9px;padding:10px 15px;font-weight:800;border:1px solid #2a3348;background:#101722;color:#fff}.primary{border:0;background:linear-gradient(135deg,#6d28d9,#8b5cf6)}main{max-width:1300px;margin:auto;padding:35px 22px}.login,.panel{background:#0c111c;border:1px solid #222c3d;border-radius:16px;padding:25px}.login{max-width:450px;margin:70px auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.stat{background:#101722;border:1px solid #222c3d;border-radius:13px;padding:20px}.stat b{font-size:28px}.table-wrap{overflow:auto;margin-top:15px}table{width:100%;border-collapse:collapse;min-width:900px}th,td{text-align:left;padding:12px;border-bottom:1px solid #222c3d;font-size:13px;vertical-align:top}th{color:#9aa5b5}.pill{padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800;background:#3b2d08;color:#facc15}.green{background:#0b3a24;color:#5ee35e}.red{background:#3b1017;color:#ff5c70}.field{margin-bottom:15px}label{display:block;color:#cbd5e1;font-size:13px;margin-bottom:7px}input{width:100%;padding:12px;border-radius:9px;border:1px solid #2a3348;background:#080d16;color:#fff;outline:0}.msg{min-height:20px;margin-top:12px;font-size:13px}.error{color:#ff5c70}.success{color:#5ee35e}.hidden{display:none}.actions{display:flex;gap:7px;flex-wrap:wrap}.danger{color:#ff9aaa}.code{display:none;margin-top:8px;padding:9px;background:#05070d;border:1px solid #39236a;border-radius:8px;word-break:break-all}.code.show{display:block}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+</style></head>
+<body>
+<header><div class="logo"><div class="mark">C</div>Cardora Admin</div><button id="logoutBtn" class="hidden" onclick="logout()">Sign Out</button></header>
+<main>
+<div id="loginView" class="login"><h2>Admin Sign In</h2><p style="color:#9aa5b5;font-size:13px">Use the admin credentials from your .env file.</p><div class="field"><label>Email</label><input id="email" type="email"></div><div class="field"><label>Password</label><input id="password" type="password"></div><button class="primary" style="width:100%" onclick="adminLogin()">Sign In</button><div id="loginMsg" class="msg"></div></div>
+<div id="dashboard" class="hidden">
+<h1>Dashboard</h1><div class="grid"><div class="stat"><span style="color:#9aa5b5">Voucher submissions</span><br><b id="voucherCount">0</b></div><div class="stat"><span style="color:#9aa5b5">Orders</span><br><b id="orderCount">0</b></div></div>
+<div class="panel" style="margin-top:20px">
+<h2>➕ Add Voucher to Inventory</h2>
+<p style="color:#9aa5b5;font-size:13px;margin:8px 0 18px">Add your own real voucher code to Cardora inventory. The code stays private and is only revealed to the buyer after payment is verified and the order is delivered.</p>
+<div class="grid">
+  <div class="field"><label>Brand</label><select id="manualBrand" style="width:100%;padding:12px;border-radius:9px;border:1px solid #2a3348;background:#080d16;color:#fff"><option value="">Choose brand</option></select></div>
+  <div class="field"><label>Voucher Value (USD)</label><input id="manualAmount" type="number" min="1" step="0.01" placeholder="50"></div>
+</div>
+<div class="field"><label>Voucher Code (private)</label><input id="manualCode" type="text" autocomplete="off" placeholder="Enter the real gift card code"></div>
+<button class="primary" onclick="addManualVoucher()">Add Voucher</button>
+<div id="manualMsg" class="msg"></div>
+</div>
+
+<div class="panel" style="margin-top:20px"><h2>Voucher Submissions</h2><div id="vouchers" class="table-wrap"></div></div>
+<div class="panel" style="margin-top:20px"><h2>Orders & Payment Verification</h2><div id="orders" class="table-wrap"></div></div>
+</div></main>
+<script>
+var API_BASE="https://cardora-wgf4.onrender.com";
+var token=null,vouchers=[],orders=[];
+function esc(v){return String(v==null?"":v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
+function headers(){return {"Content-Type":"application/json","Authorization":"Bearer "+token};}
+function req(url,opt){opt=opt||{};opt.headers=headers();return fetch(API_BASE+url,opt).then(function(r){return r.text().then(function(t){var j={};try{j=t?JSON.parse(t):{}}catch(e){}if(!r.ok)throw Error(j.error||"Request failed.");return j;});});}
+function post(url,data){return req(url,{method:"POST",body:JSON.stringify(data||{})});}
+function adminLogin(){var m=document.getElementById("loginMsg");post("/api/admin/login",{email:document.getElementById("email").value.trim(),password:document.getElementById("password").value}).then(function(j){token=j.user.token;localStorage.setItem("cardora-admin-token",token);showDash();loadAll();}).catch(function(e){m.className="msg error";m.textContent=e.message;});}
+function showDash(){document.getElementById("loginView").classList.add("hidden");document.getElementById("dashboard").classList.remove("hidden");document.getElementById("logoutBtn").classList.remove("hidden");}
+function logout(){token=null;localStorage.removeItem("cardora-admin-token");location.reload();}
+function loadAll(){loadManualBrands();Promise.all([req("/api/admin/vouchers"),req("/api/admin/orders")]).then(function(a){vouchers=a[0].vouchers||[];orders=a[1].orders||[];document.getElementById("voucherCount").textContent=vouchers.length;document.getElementById("orderCount").textContent=orders.length;renderVouchers();renderOrders();}).catch(function(e){alert(e.message);});}
+function renderVouchers(){document.getElementById("vouchers").innerHTML='<table><thead><tr><th>Submission</th><th>Source</th><th>Seller</th><th>Brand</th><th>Value</th><th>Payout</th><th>Status</th><th>Code</th><th>Actions</th></tr></thead><tbody>'+vouchers.map(function(v){var source=v.source==="manual"?"Manual":"Seller";return '<tr><td>'+esc(v.submissionId)+'</td><td><span class="pill '+(v.source==="manual"?"green":"")+'">'+source+'</span></td><td>'+esc(v.sellerEmail||"-")+'</td><td>'+esc(v.brand)+'</td><td>$'+Number(v.amount).toFixed(2)+'</td><td>'+(v.payoutAmount?('$'+Number(v.payoutAmount).toFixed(2)+' '+esc(v.payoutMethod||"")):"-")+'</td><td><span class="pill '+(v.status==="approved"?"green":v.status==="rejected"?"red":"")+'">'+esc(v.status)+'</span></td><td><button onclick="showCode(\''+esc(v.id)+'\',this)">View</button><div class="code"></div></td><td><div class="actions">'+(v.source==="manual"?"":"<button onclick=\"setVoucher('"+esc(v.id)+"','approved')\">Approve</button><button onclick=\"setVoucher('"+esc(v.id)+"','rejected')\">Reject</button>")+'</div></td></tr>';}).join("")+'</tbody></table>';}
+
+function showCode(id,btn){
+  var box=btn.nextElementSibling;
+  if(box.classList.contains("show")){box.classList.remove("show");return;}
+  req("/api/admin/vouchers/"+encodeURIComponent(id)+"/code").then(function(j){
+    box.innerHTML="";
+    var code=document.createElement("div");
+    code.textContent=j.code;
+    var copy=document.createElement("button");
+    copy.style.marginTop="8px";
+    copy.textContent="Copy code";
+    copy.onclick=function(){copyCodeText(j.code)};
+    box.appendChild(code);
+    box.appendChild(copy);
+    box.classList.add("show");
+  }).catch(function(e){alert(e.message);});
+}
+
+function copyCodeText(code){navigator.clipboard.writeText(code).then(function(){alert("Voucher code copied.");}).catch(function(){alert("Copy failed. Select the code and copy it.");});}
+function setVoucher(id,status){post("/api/admin/vouchers/"+encodeURIComponent(id),{status:status}).then(loadAll).catch(function(e){alert(e.message);});}
+function renderOrders(){document.getElementById("orders").innerHTML='<table><thead><tr><th>Order</th><th>Buyer</th><th>Brand</th><th>Total</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+orders.map(function(o){var approved=vouchers.filter(function(v){return v.brand.toLowerCase()===o.brand.toLowerCase()&&v.status==="approved"&&Number(v.amount)===Number(o.faceValue);});var opts='<option value="">Choose approved voucher</option>'+approved.map(function(v){return '<option value="'+esc(v.id)+'">'+esc(v.submissionId)+' — $'+Number(v.amount).toFixed(2)+'</option>';}).join("");return '<tr><td>'+esc(o.id)+'</td><td>'+esc(o.buyerEmail)+'</td><td>'+esc(o.brand)+'</td><td>$'+Number(o.totalUsd).toFixed(2)+'</td><td>'+esc(o.crypto||"-")+'<br>'+esc(o.txHash||"No TXID")+'</td><td><span class="pill '+(o.status==="delivered"?"green":"")+'">'+esc(o.status)+'</span></td><td><div class="actions">'+(o.paymentStatus==="payment_submitted"?'<button onclick="verifyPayment(\''+esc(o.id)+'\')">Verify Payment</button>':"")+(o.paymentStatus==="verified"||o.status==="payment_verified"?'<select id="voucher-'+esc(o.id)+'">'+opts+'</select><button onclick="assignVoucher(\''+esc(o.id)+'\')">Assign</button>':"")+(o.status==="ready_for_delivery"?'<button onclick="deliver(\''+esc(o.id)+'\')">Deliver</button>':"")+'</div></td></tr>';}).join("")+'</tbody></table>';}
+function verifyPayment(id){post("/api/admin/orders/"+encodeURIComponent(id)+"/verify-payment",{}).then(loadAll).catch(function(e){alert(e.message);});}
+function assignVoucher(id){var el=document.getElementById("voucher-"+id);var v=el&&el.value;if(!v){alert("Choose an approved voucher.");return;}post("/api/admin/orders/"+encodeURIComponent(id)+"/assign-voucher",{voucherId:v}).then(function(j){alert(j.message||"Voucher assigned.");loadAll();}).catch(function(e){alert(e.message);});}
+function deliver(id){post("/api/admin/orders/"+encodeURIComponent(id)+"/deliver",{}).then(loadAll).catch(function(e){alert(e.message);});}
+function loadManualBrands(){
+  fetch(API_BASE+"/api/cards").then(function(r){return r.json();}).then(function(cards){
+    var s=document.getElementById("manualBrand");
+    s.innerHTML='<option value="">Choose brand</option>'+cards.map(function(c){return '<option value="'+esc(c.brand)+'">'+esc(c.brand)+'</option>';}).join("");
+  }).catch(function(){});
+}
+function addManualVoucher(){
+  var msg=document.getElementById("manualMsg");
+  var brand=document.getElementById("manualBrand").value;
+  var amount=document.getElementById("manualAmount").value;
+  var code=document.getElementById("manualCode").value.trim();
+  if(!brand||!amount||!code){msg.className="msg error";msg.textContent="Enter the brand, value and voucher code.";return;}
+  msg.className="msg";msg.textContent="Adding gift card...";
+  post("/api/admin/vouchers/manual",{brand:brand,amount:Number(amount),code:code}).then(function(j){
+    msg.className="msg success";msg.textContent=j.message+" ID: "+j.voucher.submissionId;
+    document.getElementById("manualBrand").value="";
+    document.getElementById("manualAmount").value="";
+    document.getElementById("manualCode").value="";
+    loadAll();
+  }).catch(function(e){msg.className="msg error";msg.textContent=e.message;});
+}
+(function(){token=localStorage.getItem("cardora-admin-token");if(token){showDash();loadAll();}})();
+</script></body></html>
