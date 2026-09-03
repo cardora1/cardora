@@ -256,6 +256,36 @@ function cardExists(brand) {
   return cards.some(c => c.brand.toLowerCase() === String(brand).trim().toLowerCase());
 }
 
+// Allow GitHub Pages frontend to call the Render API
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+
+  const allowedOrigins = [
+    "https://cardora1.github.io",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+  ];
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Vary", "Origin");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    );
+  }
+
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 app.use(express.json({ limit: "100kb" }));
 app.use(express.static(__dirname));
 
@@ -863,7 +893,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Cardora running at http://localhost:${PORT}`);
   console.log(`Email mode: ${transporter ? "REAL EMAIL" : "DEMO — verification codes print here"}`);
   console.log(`Seller payout: ${SELLER_PAYOUT_PERCENT}%`);
