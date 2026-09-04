@@ -18,7 +18,16 @@
 }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+  const browserLanguage = (navigator.language || "").toLowerCase();
+  const googleLanguage = browserLanguage.startsWith("am") ? "?hl=en" : "";
+
+  document.write(
+    '<script src="https://accounts.google.com/gsi/client' +
+    googleLanguage +
+    '" async defer><\/script>'
+  );
+</script>
 <style>
 :root{
   --bg:#05070d;--bg2:#080b14;--card:#0c111c;--card2:#111827;--border:#222c3d;
