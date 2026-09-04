@@ -1051,12 +1051,18 @@ function initGoogleLogin(){
   const button = document.getElementById("googleSignInButton");
 
   if(button){
-    google.accounts.id.renderButton(button,{
-      theme:"outline",
-      size:"large",
-      width:400,
-      text:"continue_with"
-    });
+  const googleButtonWidth = Math.min(
+    400,
+    Math.max(240, button.parentElement.clientWidth - 40)
+  );
+
+  google.accounts.id.renderButton(button,{
+    theme:"outline",
+    size:"large",
+    width:googleButtonWidth,
+    text:"continue_with"
+  });
+}
   }
 }
 
