@@ -1194,10 +1194,21 @@ function askAI(){
 function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3000)}
 
 function enterCardora(){
- const screen=document.getElementById("welcomeScreen");
- screen.classList.add("hide");
- setTimeout(()=>{screen.style.display="none";},600);
- window.scrollTo({top:0,behavior:"smooth"});
+  const screen = document.getElementById("welcomeScreen");
+
+  if (!screen) {
+    console.error("Cardora welcome screen not found");
+    return;
+  }
+
+  screen.classList.add("hide");
+
+  setTimeout(function(){
+    screen.style.display = "none";
+  }, 600);
+
+  document.body.style.overflow = "auto";
+  window.scrollTo(0, 0);
 }
 
 function init(){
