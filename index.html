@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=5, user-scalable=yes">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
 <title>Cardora — Digital Voucher Code Marketplace</title>
 <meta name="description" content="Cardora is a marketplace for buying and selling digital voucher codes. Digital voucher codes only — no physical gift cards.">
 <meta name="robots" content="index,follow,max-image-preview:large">
@@ -1517,38 +1517,6 @@ function init(){
  }catch{localStorage.removeItem("cardora-user")}
 }
 init();
-</script>
-
-<script>
-(function () {
-  if (!window.visualViewport) return;
-
-  let timer;
-
-  function snapBackIfTooSmall() {
-    clearTimeout(timer);
-
-    timer = setTimeout(() => {
-      if (window.visualViewport.scale < 1) {
-        const meta = document.querySelector('meta[name="viewport"]');
-        if (!meta) return;
-
-        const original = meta.getAttribute("content");
-
-        meta.setAttribute(
-          "content",
-          "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"
-        );
-
-        setTimeout(() => {
-          meta.setAttribute("content", original);
-        }, 80);
-      }
-    }, 120);
-  }
-
-  window.visualViewport.addEventListener("resize", snapBackIfTooSmall);
-})();
 </script>
 
 </body>
