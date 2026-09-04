@@ -512,9 +512,9 @@ app.post("/api/google-login", async (req, res) => {
       return res.status(403).json({ error: "Admin account cannot use Google login." });
     }
 
-    let user = users.find(
-      (u) => String(u.email || "").toLowerCase() === email
-    );
+    let user = db.users.find(
+  (u) => String(u.email || "").toLowerCase() === email
+);
 
     if (!user) {
       user = {
@@ -528,12 +528,12 @@ app.post("/api/google-login", async (req, res) => {
         createdAt: new Date().toISOString()
       };
 
-      users.push(user);
-      saveUsers();
+      db.users.push(user);
+save();
     } else {
       user.verified = true;
       user.googleSub = user.googleSub || payload.sub;
-      saveUsers();
+     save();
     }
 
     const token = crypto.randomBytes(32).toString("hex");
