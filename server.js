@@ -6,8 +6,11 @@ const path = require("path");
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
+const { OAuth2Client } = require("google-auth-library");
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
 const dir = path.join(__dirname, "data");
 const file = path.join(dir, "db.json");
 
@@ -467,7 +470,7 @@ app.post("/api/login", (req, res) => {
   const password = String(req.body.password || "");
   const user = db.users.find(u => u.email === email);
 
-  if (!user || !verifyAndUpgradePassword(user, password)) {
+ if (!user || !user.password || !verifyAndUpgradePassword(user, password)) {
     return res.status(401).json({ error: "Incorrect email or password." });
   }
   if (!user.verified) {
@@ -478,6 +481,76 @@ app.post("/api/login", (req, res) => {
   sessions.set(token, { userId: user.id, expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000 });
 
   res.json({ message: "Signed in.", user: publicUser(user, token) });
+});
+
+app.post("/api/google-login", async (req, res) => {
+  try {
+    const { credential } = req.body || {};
+
+    if (!credential) {
+      return res.status(400).json({ error: "Google credential is required." });
+    }
+
+    if (!GOOGLE_CLIENT_ID) {
+      return res.status(500).json({ error: "Google login is not configured." });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: GOOGLE_CLIENT_ID
+    });
+
+    const payload = ticket.getPayload();
+
+    if (!payload?.email || !payload.email_verified) {
+      return res.status(401).json({ error: "Google email could not be verified." });
+    }
+
+    const email = String(payload.email).trim().toLowerCase();
+
+    if (email === ADMIN_EMAIL.toLowerCase()) {
+      return res.status(403).json({ error: "Admin account cannot use Google login." });
+    }
+
+    let user = users.find(
+      (u) => String(u.email || "").toLowerCase() === email
+    );
+
+    if (!user) {
+      user = {
+        id: crypto.randomUUID(),
+        email,
+        password: null,
+        verified: true,
+        role: "buyer",
+        authProvider: "google",
+        googleSub: payload.sub,
+        createdAt: new Date().toISOString()
+      };
+
+      users.push(user);
+      saveUsers();
+    } else {
+      user.verified = true;
+      user.googleSub = user.googleSub || payload.sub;
+      saveUsers();
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+
+    sessions.set(token, {
+      userId: user.id,
+      expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.json({
+      message: "Signed in with Google.",
+      user: publicUser(user, token)
+    });
+  } catch (error) {
+    console.error("Google login error:", error);
+    res.status(401).json({ error: "Google sign-in failed." });
+  }
 });
 
 app.post("/api/logout", requireUser, (req, res) => {
