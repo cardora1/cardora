@@ -875,8 +875,13 @@ function browseAllVouchers(){
 function fillBrands(){document.getElementById("sellBrand").innerHTML='<option value="">Choose brand</option>'+brands.map(b=>`<option>${esc(b[0])}</option>`).join("")}
 function openSignup(){
   document.getElementById("loginModal").classList.add("active");
+  document.querySelector(".premium-login .modal-head h2").textContent="Create Your Profile";
+  document.querySelector(".premium-login .modal-head p").innerHTML='Already have an account? <button class="create-profile-link" type="button" onclick="openLogin()">Sign in</button>';
+  document.querySelector(".premium-login .login-main-btn").textContent="Create Account";
+  document.querySelector(".premium-login .login-main-btn").setAttribute("onclick","signup()");
   document.getElementById("loginEmail").focus();
   document.getElementById("authStatus").textContent="";
+}
 }
 
 function openLogin(){document.getElementById("loginModal").classList.add("active")}
