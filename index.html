@@ -430,6 +430,21 @@ footer{border-top:1px solid var(--border);margin-top:70px;padding:40px 28px;text
   .premium-login .auth-brand {
     margin-bottom: 24px;
   }
+}/* Premium login scrolling */
+.premium-login {
+  max-height: 85vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  scrollbar-width: thin;
+}
+
+.premium-login::-webkit-scrollbar {
+  width: 6px;
+}
+
+.premium-login::-webkit-scrollbar-thumb {
+  background: rgba(139,92,246,.55);
+  border-radius: 10px;
 }
 </style>
 </head>
