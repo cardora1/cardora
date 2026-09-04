@@ -564,9 +564,12 @@ footer{border-top:1px solid var(--border);margin-top:70px;padding:40px 28px;text
     display: none;
   }
 
-  .modal {
-    padding: 12px;
-  }
+ .modal {
+  padding: 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  align-items: flex-start;
+}
 
   .modal-box {
     padding: 22px 16px;
@@ -631,10 +634,13 @@ footer{border-top:1px solid var(--border);margin-top:70px;padding:40px 28px;text
 }
 }/* Premium login scrolling */
 .premium-login {
-  max-height: 85vh;
+  max-height: 85dvh;
   overflow-y: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
   scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .premium-login::-webkit-scrollbar {
