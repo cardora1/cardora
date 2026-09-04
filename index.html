@@ -18,6 +18,7 @@
 }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
 :root{
   --bg:#05070d;--bg2:#080b14;--card:#0c111c;--card2:#111827;--border:#222c3d;
@@ -689,10 +690,7 @@ footer{border-top:1px solid var(--border);margin-top:70px;padding:40px 28px;text
       <span>Or</span>
     </div>
 
-    <button class="google-login" type="button" disabled>
-      <span class="google-icon">G</span>
-      Continue with Google
-    </button>
+    <div id="googleSignInButton"></div>
 
     <div class="auth-divider">
       <span>Secure email verification</span>
@@ -842,6 +840,56 @@ async function request(url, options={}){
 }
 function api(url,data){return request(url,{method:"POST",body:JSON.stringify(data||{})})}
 function getApi(url){return request(url)}
+  const GOOGLE_CLIENT_ID = "905132611074-tq509sbue6n6mudd9qocoq5d07f9k2m4.apps.googleusercontent.com";
+
+function initGoogleLogin(){
+  if(!window.google?.accounts?.id) return;
+
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID,
+    callback: handleGoogleCredentialResponse
+  });
+
+  const button = document.getElementById("googleSignInButton");
+
+  if(button){
+    google.accounts.id.renderButton(button,{
+      theme:"outline",
+      size:"large",
+      width:400,
+      text:"continue_with"
+    });
+  }
+}
+
+async function handleGoogleCredentialResponse(response){
+  const status = document.getElementById("authStatus");
+
+  try{
+    status.className="status";
+    status.textContent="Signing in with Google...";
+
+    const j = await api("/api/google-login",{
+      credential: response.credential
+    });
+
+    user = j.user;
+    localStorage.setItem("cardora-user",JSON.stringify(user));
+
+    updateAuthUI(user);
+    closeLogin();
+    showToast("You're signed in with Google!");
+
+    await Promise.all([loadSales(),loadOrders()]);
+  }catch(e){
+    status.className="status error";
+    status.textContent=e.message;
+  }
+}
+
+window.addEventListener("load",function(){
+  initGoogleLogin();
+});
 function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
 function goHome(){window.scrollTo({top:0,behavior:"smooth"})}
 function scrollToSection(id){document.getElementById(id)?.scrollIntoView({behavior:"smooth",block:"start"})}
