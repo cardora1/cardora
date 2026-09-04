@@ -11,6 +11,7 @@ const app = express();
 const PORT = Number(process.env.PORT || 3000);
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const googleClient = new OAuth2Client(GOOGLE_CLIENT_ID);
+const ADMIN_EMAIL = String(process.env.ADMIN_EMAIL || "").trim().toLowerCase();
 const dir = path.join(__dirname, "data");
 const file = path.join(dir, "db.json");
 
@@ -508,7 +509,7 @@ app.post("/api/google-login", async (req, res) => {
 
     const email = String(payload.email).trim().toLowerCase();
 
-    if (email === ADMIN_EMAIL.toLowerCase()) {
+    if (ADMIN_EMAIL && email === ADMIN_EMAIL) {
       return res.status(403).json({ error: "Admin account cannot use Google login." });
     }
 
