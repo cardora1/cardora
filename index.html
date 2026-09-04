@@ -931,9 +931,25 @@ function openSignup(){
   document.getElementById("authStatus").textContent="";
 }
 
-function openLogin(){document.getElementById("loginModal").classList.add("active")}
-function openLogin(){document.getElementById("loginModal").classList.add("active")}
-function closeLogin(){document.getElementById("loginModal").classList.remove("active")}
+function openLogin(){
+  document.getElementById("loginModal").classList.add("active");
+
+  document.querySelector(".premium-login .modal-head h2").textContent="Welcome Back";
+
+  document.querySelector(".premium-login .modal-head p").innerHTML=
+    'Don\'t have a profile yet? <button class="create-profile-link" type="button" onclick="openSignup()">Create a profile</button>';
+
+  const mainBtn=document.querySelector(".premium-login .login-main-btn");
+  mainBtn.textContent="Log in";
+  mainBtn.setAttribute("onclick","login()");
+
+  document.getElementById("authStatus").textContent="";
+  document.getElementById("loginEmail").focus();
+}
+
+function closeLogin(){
+  document.getElementById("loginModal").classList.remove("active");
+}
 
 function togglePassword(id,btn){
  const input=document.getElementById(id);
