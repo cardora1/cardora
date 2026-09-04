@@ -1519,5 +1519,37 @@ function init(){
 init();
 </script>
 
+<script>
+(function () {
+  if (!window.visualViewport) return;
+
+  let timer;
+
+  function snapBackIfTooSmall() {
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      if (window.visualViewport.scale < 1) {
+        const meta = document.querySelector('meta[name="viewport"]');
+        if (!meta) return;
+
+        const original = meta.getAttribute("content");
+
+        meta.setAttribute(
+          "content",
+          "width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no"
+        );
+
+        setTimeout(() => {
+          meta.setAttribute("content", original);
+        }, 80);
+      }
+    }, 120);
+  }
+
+  window.visualViewport.addEventListener("resize", snapBackIfTooSmall);
+})();
+</script>
+
 </body>
 </html>
