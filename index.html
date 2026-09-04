@@ -873,7 +873,13 @@ function browseAllVouchers(){
  scrollToSection("cards");
 }
 function fillBrands(){document.getElementById("sellBrand").innerHTML='<option value="">Choose brand</option>'+brands.map(b=>`<option>${esc(b[0])}</option>`).join("")}
+function openSignup(){
+  document.getElementById("loginModal").classList.add("active");
+  document.getElementById("loginEmail").focus();
+  document.getElementById("authStatus").textContent="";
+}
 
+function openLogin(){document.getElementById("loginModal").classList.add("active")}
 function openLogin(){document.getElementById("loginModal").classList.add("active")}
 function closeLogin(){document.getElementById("loginModal").classList.remove("active")}
 
