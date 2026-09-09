@@ -235,6 +235,25 @@ input:focus,select:focus,textarea:focus{
 .welcome-start{box-shadow:0 15px 38px rgba(124,58,237,.30),inset 0 1px 0 rgba(255,255,255,.15)}
 .float-card{border-color:rgba(255,255,255,.15);box-shadow:0 32px 75px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.07)}
 
+/* Premium navigation: keep the full desktop nav elegant instead of cramped. */
+.nav-actions{gap:8px}
+@media(max-width:1180px) and (min-width:901px){
+  header{padding:0 20px}
+  nav{gap:13px}
+  nav a{font-size:12px}
+  .logo-text span{display:none}
+  .logo-mark{width:42px;height:42px}
+  .logo-text strong{font-size:19px}
+  .nav-actions .icon-btn{width:38px;height:38px}
+  .sign-btn{padding:10px 15px}
+}
+
+/* Give the hero cards more breathing room on wide screens. */
+@media(min-width:1181px){
+  .hero{grid-template-columns:minmax(0,1fr) minmax(470px,.92fr)}
+  .hero-cards{min-height:430px}
+}
+
 /* Prevent the AI helper from covering key controls on compact screens. */
 @media(max-width:1050px){
   nav{gap:16px}
@@ -248,6 +267,7 @@ input:focus,select:focus,textarea:focus{
   .cards{grid-template-columns:repeat(2,1fr)}
   .trust-item{border-radius:14px}
   .ai-button{right:14px;bottom:14px}
+  .ai-panel{right:12px;bottom:78px;width:min(390px,calc(100vw - 24px));height:min(580px,72vh)}
 }
 @media(max-width:480px){
   .hero h1{font-size:39px;letter-spacing:-2px}
@@ -255,6 +275,18 @@ input:focus,select:focus,textarea:focus{
   .cards{grid-template-columns:1fr}
   #searchInput{min-height:52px}
   .ai-button{padding:12px 16px;font-size:12px}
+  .hero-cards{min-height:285px;transform:scale(.78);transform-origin:top center;margin-bottom:-55px}
+  .features{grid-template-columns:1fr}
+  .feature{border-right:0}
+  .form-grid{grid-template-columns:1fr}
+  .form-group.full{grid-column:auto}
+}
+
+/* Small-screen nav becomes a clean horizontal rail rather than wrapping into the page. */
+@media(max-width:700px){
+  nav{scrollbar-width:none;-ms-overflow-style:none}
+  nav::-webkit-scrollbar{display:none}
+  nav a{padding:7px 0}
 }
 
 @media(prefers-reduced-motion:reduce){
