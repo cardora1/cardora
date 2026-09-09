@@ -211,7 +211,7 @@ function renderOrders(){
   }).join("");
 }
 window.viewCode=function(id){
-  get("/api/my-orders/"+encodeURIComponent(id)).then(function(j){if(j.order && j.order.voucherCode){alert("Your voucher code:\\n\\n"+j.order.voucherCode);}else toast("Voucher code is not ready yet.");}).catch(function(e){toast(e.message);});
+  get("/api/my-orders/"+encodeURIComponent(id)).then(function(j){if(j.order && j.order.voucherCode){alert("Your voucher code:\n\n"+j.order.voucherCode);}else toast("Voucher code is not ready yet.");}).catch(function(e){toast(e.message);});
 };
 
 window.toggleAI=function(){$("aiPanel").classList.toggle("open");};
@@ -236,9 +236,38 @@ window.askAI=function(){
   $("aiMessages").innerHTML+='<div class="ai-message"><strong>Cardora AI:</strong> '+esc(a)+'</div>';input.value="";$("aiMessages").scrollTop=$("aiMessages").scrollHeight;
 };
 
+function restoreSession(){
+  var saved;
+  try {
+    saved = JSON.parse(localStorage.getItem("cardora-user") || "null");
+  } catch(e) {
+    localStorage.removeItem("cardora-user");
+    return Promise.resolve();
+  }
+
+  if(!saved || !saved.token) return Promise.resolve();
+
+  user = saved;
+  updateAuth();
+
+  // Validate the saved bearer token against the backend before treating the
+  // browser as signed in. This clears stale sessions after server restarts,
+  // expiry, or password resets instead of leaving a misleading signed-in UI.
+  return get("/api/my-orders").then(function(){
+    loadSales();
+    loadOrders();
+  }).catch(function(){
+    user = null;
+    localStorage.removeItem("cardora-user");
+    updateAuth();
+    renderSales();
+    renderOrders();
+  });
+}
+
 function init(){
   fillBrands();renderCards();updateCart();renderSales();renderOrders();loadPaymentOptions();
-  try{var saved=JSON.parse(localStorage.getItem("cardora-user")||"null");if(saved && saved.token){user=saved;updateAuth();loadSales();loadOrders();}}catch(e){localStorage.removeItem("cardora-user");}
+  restoreSession();
 }
 init();
 }());
